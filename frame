@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Booth</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #fceff1;
+            color: #6d6875;}
+
+        .container {
+            margin: 20px auto;
+            width: 80%;
+            background: #ffe5ec;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        video, canvas {
+            border: 5px solid #bde0fe;
+            border-radius: 10px;
+        }
+        .frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        button {
+            background-color: #cddafd;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #ffb3c6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Photo Booth</h1>
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+        <img id="frame" class="frame" src="custom-frame.png" alt="Frame">
+        <br>
+        <button onclick="capturePhoto()">Capture Photo</button>
+        <button onclick="downloadPhoto()">Download</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const frame = document.getElementById('frame');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error("Error accessing webcam: ", error);
+            });
+
+        function capturePhoto() {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            context.drawImage(frame, 0, 0, canvas.width, canvas.height);
+            canvas.style.display = 'block';
+            video.style.display = 'none';
+        }
+
+        function downloadPhoto() {
+            const link = document.createElement('a');
+            link.download = 'photo.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
