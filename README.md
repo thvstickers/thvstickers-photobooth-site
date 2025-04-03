@@ -1,1 +1,0 @@
-# thvstickers-photobooth-site
